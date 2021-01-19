@@ -6,19 +6,27 @@ class App extends Component {  //using this class we can get the access of somet
   constructor() {
     super();
     this.state = {
-      monsters: []
-    }
+      monsters: [],
+      searchField:""
+    };
   }
   componentDidMount() {
     fetch('http://jsonplaceholder.typicode.com/users')
     .then(response => response.json())
     .then(users => this.setState({monsters: users}));
   }
-  render() {
+  //this.setState() is a asyncronous function call but to see the changes that wheather the state is
+  //changing properly using this.setState() we have a call back function as this.setState({}.()=>{}) which will execute after the state has been changed
+  // this is made asynchronous because react automatically chose the best time to update the things
+   render() {
+    const { monsters, searchField } = this.state;
+    const filteredMonsters = monsters.filter(monster =>
+      monster.name.toLowerCase().includes(searchField.toLowerCase())
+      )
      return (
       <div className="App">
-        <CardList>{this.state.monsters.map(monsters =><h1 key={monsters.id}>{monsters.name}</h1>)}   </CardList>
-                 {/*if we dont give the id to it then the react is not able to know which object has been changed using setState so the key give the information about which element is updated so it will not update all the element instead update one and re-rendre that only*/}
+        <input onChange = {e => this.setState({searchField:e.target.value})} type="search" placeholder="search monster"/>
+        <CardList monsters = {filteredMonsters}/>
     </div>
      )
    }
@@ -31,5 +39,6 @@ class App extends Component {  //using this class we can get the access of somet
 
 //   );
 // }
-
+//  <input onChange = {e => this.setState({searchField:e.target.value})} type="search" placeholder="search monster"/>
+// here we are sending the function not calling it as this is trigred only when the onChange occurs this onChange is a "Synthetic event"
 export default App;
